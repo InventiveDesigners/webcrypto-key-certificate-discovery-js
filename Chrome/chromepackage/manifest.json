@@ -1,0 +1,9 @@
+{
+  "name": "Web Crypto Key and Certificate Discovery",
+  "version": "${FBSTRING_PLUGIN_VERSION}",
+  "description": "This plug-in will add support for the Web Crypto Key and Certificate Discovery API to your browser.",
+
+	"plugins": [
+    { "path": "npWebCryptoKeyandCertificateDiscovery.dll", "public": true }
+  ]
+}
