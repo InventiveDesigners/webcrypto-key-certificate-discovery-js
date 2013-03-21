@@ -41,7 +41,6 @@ public:
         EVENTTYPE_CASE(FB::MouseDownEvent, onMouseDown, FB::PluginWindow)
         EVENTTYPE_CASE(FB::MouseUpEvent, onMouseUp, FB::PluginWindow)
         EVENTTYPE_CASE(FB::MouseMoveEvent, onMouseMove, FB::PluginWindow)
-        EVENTTYPE_CASE(FB::MouseMoveEvent, onMouseMove, FB::PluginWindow)
         EVENTTYPE_CASE(FB::AttachedEvent, onWindowAttached, FB::PluginWindow)
         EVENTTYPE_CASE(FB::DetachedEvent, onWindowDetached, FB::PluginWindow)
     END_PLUGIN_EVENT_MAP()
