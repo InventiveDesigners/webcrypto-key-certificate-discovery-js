@@ -93,23 +93,6 @@ FB::JSAPIPtr WebCryptoKeyandCertificateDiscovery::createJSAPI()
     return boost::make_shared<WebCryptoKeyandCertificateDiscoveryAPI>(FB::ptr_cast<WebCryptoKeyandCertificateDiscovery>(shared_from_this()), m_host);
 }
 
-bool WebCryptoKeyandCertificateDiscovery::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow *)
-{
-    //printf("Mouse down at: %d, %d\n", evt->m_x, evt->m_y);
-    return false;
-}
-
-bool WebCryptoKeyandCertificateDiscovery::onMouseUp(FB::MouseUpEvent *evt, FB::PluginWindow *)
-{
-    //printf("Mouse up at: %d, %d\n", evt->m_x, evt->m_y);
-    return false;
-}
-
-bool WebCryptoKeyandCertificateDiscovery::onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindow *)
-{
-    //printf("Mouse move at: %d, %d\n", evt->m_x, evt->m_y);
-    return false;
-}
 bool WebCryptoKeyandCertificateDiscovery::onWindowAttached(FB::AttachedEvent *evt, FB::PluginWindow *)
 {
     // The window is attached; act appropriately
