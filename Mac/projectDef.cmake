@@ -32,9 +32,13 @@ set(LOCALIZED "Mac/bundle_template/Localized.r")
 
 add_mac_plugin(${PROJECT_NAME} ${PLIST} ${STRINGS} ${LOCALIZED} SOURCES)
 
+FIND_LIBRARY(SECURITY_LIBRARY Security )
+SET(EXTRA_LIBS ${SECURITY_LIBRARY})
+
 # add library dependencies here; leave ${PLUGIN_INTERNAL_DEPS} there unless you know what you're doing!
 target_link_libraries(${PROJECT_NAME}
     ${PLUGIN_INTERNAL_DEPS}
+    ${EXTRA_LIBS}
     )
 
 #To create a DMG, include the following file

@@ -31,19 +31,8 @@ public:
     WebCryptoKeyandCertificateDiscoveryAPI(const WebCryptoKeyandCertificateDiscoveryPtr& plugin, const FB::BrowserHostPtr& host) :
         m_plugin(plugin), m_host(host)
     {
-        registerMethod("echo",      make_method(this, &WebCryptoKeyandCertificateDiscoveryAPI::echo));
-        registerMethod("testEvent", make_method(this, &WebCryptoKeyandCertificateDiscoveryAPI::testEvent));
-        
-        // Read-write property
-        registerProperty("testString",
-                         make_property(this,
-                                       &WebCryptoKeyandCertificateDiscoveryAPI::get_testString,
-                                       &WebCryptoKeyandCertificateDiscoveryAPI::set_testString));
-        
-        // Read-only property
-        registerProperty("version",
-                         make_property(this,
-                                       &WebCryptoKeyandCertificateDiscoveryAPI::get_version));
+        registerMethod("createX509CertificateSelector",      make_method(this, &WebCryptoKeyandCertificateDiscoveryAPI::createX509CertificateSelector));
+       
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -57,22 +46,7 @@ public:
 
     WebCryptoKeyandCertificateDiscoveryPtr getPlugin();
 
-    // Read/Write property ${PROPERTY.ident}
-    std::string get_testString();
-    void set_testString(const std::string& val);
-
-    // Read-only property ${PROPERTY.ident}
-    std::string get_version();
-
-    // Method echo
-    FB::variant echo(const FB::variant& msg);
-    
-    // Event helpers
-    FB_JSAPI_EVENT(test, 0, ());
-    FB_JSAPI_EVENT(echo, 2, (const FB::variant&, const int));
-
-    // Method test-event
-    void testEvent();
+    FB::JSAPIPtr createX509CertificateSelector(FB::VariantMap selectorParams);
 
 private:
     WebCryptoKeyandCertificateDiscoveryWeakPtr m_plugin;
