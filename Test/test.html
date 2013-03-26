@@ -1,0 +1,78 @@
+<html>
+<head>
+<title>test page for Web Crypto</title>
+</head>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        function plugin0()
+        {
+            return document.getElementById('plugin0');
+        }
+        plugin = plugin0;
+
+        function pluginLoaded() {
+            console.log("Plugin loaded!");
+            if(plugin().valid) {
+                console.log("This plugin seems to be working!");
+            } else {
+                console.log("Plugin is not working :(");
+            }
+        }
+                
+        function listCertificates()
+        {
+            var certificateSelector = plugin().createX509CertificateSelector({});
+            
+            certificateSelector.oncomplete = function() {
+            	console.log("Certificates :" + certificateSelector.result);
+            };
+            
+            certificateSelector.onerror = function() {
+            	console.log("Error retrieving certificates");
+            };
+            
+            certificateSelector.execute();
+        }
+        
+        
+        function load()
+        {
+        	if (typeof console  != "undefined") {
+    			if (typeof console.log != 'undefined') {
+        			console.olog = console.log;
+        		}
+    			else {
+        			console.olog = function() {};
+        		}
+        	}
+
+			console.log = function(message) {
+    			console.olog(message);
+    			$('#debugDiv').append('<div class="message">' + message + '</div>');
+			};
+        }
+    </script>
+    
+    <style type="text/css">
+    	.message {
+    		border-bottom: 1px solid lightgray;
+    		padding-bottom: 4px;
+    		margin-bottom: 4px;
+    	}
+    	
+    	.message:last-child  {
+    		border-bottom: none;
+    		padding-bottom: 0px;
+    		margin-bottom: 0px;
+    	}
+    </style>
+<body onload="load()">
+<object id="plugin0" type="application/x-webcryptokeyandcertificatediscovery" width="0" height="0">
+    <param name="onload" value="pluginLoaded" />
+</object><br />
+    
+<a href="#" onclick="javascript:listCertificates()">List Certificates</a>
+
+<div id="debugDiv" style="margin-top: 30px; border: 1px solid gray; padding: 10px;"></div>
+</body>
+</html>
