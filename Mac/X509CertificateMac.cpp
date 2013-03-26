@@ -27,7 +27,7 @@ X509CertificateMac& X509CertificateMac::operator=(const X509CertificateMac& othe
 FB::JSAPIPtr X509CertificateMac::get_issuerX500Principal()
 {
     // TODO implement
-    return boost::shared_ptr<X500Principal>(new X500Principal(m_host, ""));
+    return boost::shared_ptr<X500Principal>(new X500Principal(m_host, L""));
 }
 
 FB::FBDateString X509CertificateMac::get_notAfter()
@@ -53,7 +53,7 @@ long X509CertificateMac::get_serialNumber()
 FB::JSAPIPtr X509CertificateMac::get_subjectX500Principal()
 {
     // TODO implement
-    return boost::shared_ptr<X500Principal>(new X500Principal(m_host, ""));
+    return boost::shared_ptr<X500Principal>(new X500Principal(m_host, L""));
 }
 
 

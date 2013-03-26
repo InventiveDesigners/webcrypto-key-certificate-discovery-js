@@ -15,17 +15,17 @@
 class X500Principal : public FB::JSAPIAuto
 {
 public:
-    X500Principal(const FB::BrowserHostPtr& host, std::string name);
+    X500Principal(const FB::BrowserHostPtr& host, std::wstring name);
     virtual ~X500Principal() {};
     
     X500Principal(const X500Principal& other);
     X500Principal& operator=(const X500Principal& other);
     
-    std::string get_name();
+    std::wstring get_name();
     
 protected:
     FB::BrowserHostPtr m_host;
-    std::string m_name;
+    std::wstring m_name;
     
 private:
     void initializeProperties();

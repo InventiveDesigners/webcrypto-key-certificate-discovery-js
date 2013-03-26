@@ -8,12 +8,12 @@
 
 #include "X500Principal.h"
 
-X500Principal::X500Principal(const FB::BrowserHostPtr& host, std::string name) : JSAPIAuto(name), m_host(host), m_name(name)
+X500Principal::X500Principal(const FB::BrowserHostPtr& host, std::wstring name) : JSAPIAuto(std::string(name.begin(), name.end())), m_host(host), m_name(name)
 {
     initializeProperties();
 }
 
-X500Principal::X500Principal(const X500Principal&other) : JSAPIAuto(other.m_name),  m_host(other.m_host), m_name(other.m_name)
+X500Principal::X500Principal(const X500Principal&other) : JSAPIAuto(std::string(other.m_name.begin(), other.m_name.end())),  m_host(other.m_host), m_name(other.m_name)
 {
     initializeProperties();
 }
@@ -28,7 +28,7 @@ X500Principal& X500Principal::operator=(const X500Principal& other)
     return *this;
 }
 
-std::string X500Principal::get_name()
+std::wstring X500Principal::get_name()
 {
     return m_name;
 }
