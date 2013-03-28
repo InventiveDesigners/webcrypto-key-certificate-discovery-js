@@ -43,10 +43,10 @@ FB::FBDateString X509CertificateImpl::get_notBefore()
 }
 
 
-long X509CertificateImpl::get_serialNumber()
+std::string X509CertificateImpl::get_serialNumber()
 {
     // TODO implement
-    return 0;
+    return "0";
 }
 
 

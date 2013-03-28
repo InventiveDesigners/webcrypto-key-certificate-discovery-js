@@ -23,7 +23,7 @@ public:
     virtual FB::JSAPIPtr get_issuerX500Principal();
     virtual FB::FBDateString get_notAfter();
     virtual FB::FBDateString get_notBefore();
-    virtual long get_serialNumber();
+    virtual std::string get_serialNumber();
     virtual FB::JSAPIPtr get_subjectX500Principal();
     virtual long get_version();
     virtual FB::VariantList get_keyUsage(); // See rfc5280 for more information

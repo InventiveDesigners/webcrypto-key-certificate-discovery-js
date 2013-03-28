@@ -30,7 +30,7 @@ public:
     virtual FB::FBDateString get_notBefore() = 0;
     //get_publicKey
     //get_privateKey
-    virtual long get_serialNumber() = 0;
+    virtual std::string get_serialNumber() = 0;
     virtual FB::JSAPIPtr get_subjectX500Principal() = 0;
     virtual long get_version() = 0;
     virtual FB::VariantList get_keyUsage() = 0; // See rfc5280 for more information

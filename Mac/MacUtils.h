@@ -17,6 +17,7 @@ class MacUtils
 {
 public:
     static std::string CFStringRefToStringUsingUTF8String(CFStringRef aString);
+    static std::wstring CFStringRefToWString(CFStringRef aString);
 };
 
 

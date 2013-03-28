@@ -2,7 +2,6 @@
 #include <vector>
 #include <Security/Security.h>
 
-#include "MacUtils.h"
 #include "../X509CertificateSelector.h"
 #include "X509CertificateMac.h"
 
@@ -27,14 +26,8 @@ void X509CertificateSelectorWorkerFunc(X509CertificateSelector * selector)
             {
                 continue;
             }
-            
-            int version = certType;
-            
-            CFStringRef commonName = NULL;
-            SecCertificateCopyCommonName(cert_ref, &commonName);
-            std::string name = MacUtils::CFStringRefToStringUsingUTF8String(commonName);
                         
-            result.push_back(make_variant(boost::shared_ptr<X509Certificate>(new X509CertificateMac(selector->m_host, MacUtils::CFStringRefToStringUsingUTF8String(commonName)))));
+            result.push_back(make_variant(X509CertificateMac::createX509CertificateMac(selector->m_host, cert_ref)));
         }
         
         selector->set_result(result);
