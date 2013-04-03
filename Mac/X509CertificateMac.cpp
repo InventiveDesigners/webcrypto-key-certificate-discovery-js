@@ -29,7 +29,7 @@
 
 std::map<std::wstring,std::wstring> X509CertificateMac::m_oid_to_str = X509CertificateMac::createOIDtoStringMapping();
 
-X509CertificateMac::X509CertificateMac(const FB::BrowserHostPtr& host, SecCertificateRef cert_ref, X500Principal issuerX500Principal, X500Principal subjectX500Principal, int version, std::string validityNotBefore, std::string validityNotAfter, std::string serialNumber) : X509Certificate(host, extractName(cert_ref)), m_cert_ref(cert_ref), m_issuerX500Principal(issuerX500Principal), m_subjectX500Principal(subjectX500Principal), m_version(version), m_validityNotBefore(validityNotBefore), m_validityNotAfter(validityNotAfter), m_serialNumber(serialNumber)
+X509CertificateMac::X509CertificateMac(const FB::BrowserHostPtr& host, SecCertificateRef cert_ref, X500Principal issuerX500Principal, X500Principal subjectX500Principal, int version, std::string validityNotBefore, std::string validityNotAfter, std::string serialNumber) : X509Certificate(host, extractName(cert_ref)), m_cert_ref(cert_ref), m_version(version), m_validityNotBefore(validityNotBefore), m_validityNotAfter(validityNotAfter), m_serialNumber(serialNumber), m_issuerX500Principal(issuerX500Principal), m_subjectX500Principal(subjectX500Principal)
 {
     
                                           
@@ -93,7 +93,7 @@ X509CertificateMac::X509CertificateMac(const FB::BrowserHostPtr& host, SecCertif
     CFRelease(chain);*/
 }
 
-X509CertificateMac::X509CertificateMac(const X509CertificateMac& other) : X509Certificate(other.m_host, extractName(other.m_cert_ref)), m_cert_ref(other.m_cert_ref),m_issuerX500Principal(other.m_issuerX500Principal), m_subjectX500Principal(other.m_subjectX500Principal), m_version(other.m_version), m_validityNotBefore(other.m_validityNotBefore), m_validityNotAfter(other.m_validityNotAfter), m_serialNumber(other.m_serialNumber)
+X509CertificateMac::X509CertificateMac(const X509CertificateMac& other) : X509Certificate(other.m_host, extractName(other.m_cert_ref)), m_cert_ref(other.m_cert_ref),m_version(other.m_version), m_validityNotBefore(other.m_validityNotBefore), m_validityNotAfter(other.m_validityNotAfter), m_serialNumber(other.m_serialNumber), m_issuerX500Principal(other.m_issuerX500Principal), m_subjectX500Principal(other.m_subjectX500Principal)
 {
 }
 
