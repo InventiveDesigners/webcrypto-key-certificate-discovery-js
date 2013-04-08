@@ -23,12 +23,19 @@
 #include "DOM/Document.h"
 #include "global/config.h"
 
-#include "WebCryptoKeyandCertificateDiscoveryAPI.h"
+#include "../WebCryptoKeyandCertificateDiscoveryAPI.h"
+#include "CryptoOperationImpl.h"
 
-#include "X509CertificateSelector.h"
 
-FB::JSAPIPtr WebCryptoKeyandCertificateDiscoveryAPI::createX509CertificateSelector(FB::VariantMap selectorParams)
+boost::shared_ptr<CryptoOperation> WebCryptoKeyandCertificateDiscoveryAPI::encrypt(boost::shared_ptr<Algorithm> algorithm, boost::shared_ptr<Key> key, boost::optional<std::string> base64Buffer)
 {
-    return boost::shared_ptr<X509CertificateSelector>(new X509CertificateSelector(m_host));
+    boost::shared_ptr<CryptoOperation> result = boost::shared_ptr<CryptoOperation>(new CryptoOperationImpl(m_host, key, algorithm));
+    
+    if (base64Buffer)
+    {
+        result->process(*base64Buffer);
+        result->finish();
+    }
+        
+    return result;
 }
-

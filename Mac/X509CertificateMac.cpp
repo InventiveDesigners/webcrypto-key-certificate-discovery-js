@@ -24,12 +24,19 @@
 
 
 #include "MacUtils.h"
+#include "KeyImpl.h"
 
 #include <sstream>
 
+static void X509CertificateMacReleaseCFTypeRef(SecKeyRef* pcf)
+{
+    CFRelease(*pcf);
+    delete pcf;
+}
+
 std::map<std::wstring,std::wstring> X509CertificateMac::m_oid_to_str = X509CertificateMac::createOIDtoStringMapping();
 
-X509CertificateMac::X509CertificateMac(const FB::BrowserHostPtr& host, SecCertificateRef cert_ref, X500Principal issuerX500Principal, X500Principal subjectX500Principal, int version, std::string validityNotBefore, std::string validityNotAfter, std::string serialNumber) : X509Certificate(host, extractName(cert_ref)), m_cert_ref(cert_ref), m_version(version), m_validityNotBefore(validityNotBefore), m_validityNotAfter(validityNotAfter), m_serialNumber(serialNumber), m_issuerX500Principal(issuerX500Principal), m_subjectX500Principal(subjectX500Principal)
+X509CertificateMac::X509CertificateMac(const FB::BrowserHostPtr& host, SecCertificateRef cert_ref, boost::shared_ptr<SecKeyRef> privateKey_ref, X500Principal issuerX500Principal, X500Principal subjectX500Principal, int version, std::string validityNotBefore, std::string validityNotAfter, std::string serialNumber) : X509Certificate(host, extractName(cert_ref)), m_cert_ref(cert_ref), m_privateKey_ref(privateKey_ref), m_version(version), m_validityNotBefore(validityNotBefore), m_validityNotAfter(validityNotAfter), m_serialNumber(serialNumber), m_issuerX500Principal(issuerX500Principal), m_subjectX500Principal(subjectX500Principal)
 {
     
                                           
@@ -93,26 +100,8 @@ X509CertificateMac::X509CertificateMac(const FB::BrowserHostPtr& host, SecCertif
     CFRelease(chain);*/
 }
 
-X509CertificateMac::X509CertificateMac(const X509CertificateMac& other) : X509Certificate(other.m_host, extractName(other.m_cert_ref)), m_cert_ref(other.m_cert_ref),m_version(other.m_version), m_validityNotBefore(other.m_validityNotBefore), m_validityNotAfter(other.m_validityNotAfter), m_serialNumber(other.m_serialNumber), m_issuerX500Principal(other.m_issuerX500Principal), m_subjectX500Principal(other.m_subjectX500Principal)
-{
-}
 
-X509CertificateMac& X509CertificateMac::operator=(const X509CertificateMac& other)
-{
-    X509Certificate::operator=(other);
-    
-    m_cert_ref = other.m_cert_ref;
-    m_issuerX500Principal = other.m_issuerX500Principal;
-    m_subjectX500Principal = other.m_subjectX500Principal;
-    m_version = other.m_version;
-    m_validityNotBefore = other.m_validityNotBefore;
-    m_validityNotAfter = other.m_validityNotAfter;
-    m_serialNumber = other.m_serialNumber;
-    
-    return *this;
-}
-
-boost::shared_ptr<X509Certificate> X509CertificateMac::createX509CertificateMac(const FB::BrowserHostPtr& host, SecCertificateRef cert_ref)
+boost::shared_ptr<X509Certificate> X509CertificateMac::createX509CertificateMac(const FB::BrowserHostPtr& host, SecCertificateRef cert_ref, SecKeyRef privateKey)
 {
     const void *keys[] = { /*kSecOIDX509V1CertificateIssuerUniqueId, kSecOIDX509V1CertificateSubjectUniqueId, */kSecOIDX509V1IssuerName, /*kSecOIDX509V1IssuerNameLDAP, kSecOIDX509V1IssuerNameStd, */kSecOIDX509V1SerialNumber, kSecOIDX509V1Signature, /*kSecOIDX509V1SignatureAlgorithm, kSecOIDX509V1SignatureAlgorithmParameters, kSecOIDX509V1SignatureAlgorithmTBS, kSecOIDX509V1SignatureCStruct, kSecOIDX509V1SignatureStruct, */kSecOIDX509V1SubjectName, /*kSecOIDX509V1SubjectNameCStruct, kSecOIDX509V1SubjectNameLDAP, kSecOIDX509V1SubjectNameStd, */kSecOIDX509V1SubjectPublicKey, /*kSecOIDX509V1SubjectPublicKeyAlgorithm, kSecOIDX509V1SubjectPublicKeyAlgorithmParameters, kSecOIDX509V1SubjectPublicKeyCStruct, */kSecOIDX509V1ValidityNotAfter, kSecOIDX509V1ValidityNotBefore, kSecOIDX509V1Version/*, kSecOIDX509V3Certificate*/ };
     CFArrayRef keySelection = CFArrayCreate(NULL, keys , sizeof(keys)/sizeof(keys[0]), &kCFTypeArrayCallBacks);
@@ -126,7 +115,7 @@ boost::shared_ptr<X509Certificate> X509CertificateMac::createX509CertificateMac(
     std::string validityNotAfter = extractDateTime(vals, kSecOIDX509V1ValidityNotAfter);
     std::string serialNumber = MacUtils::CFStringRefToStringUsingUTF8String((CFStringRef)CFDictionaryGetValue((CFDictionaryRef)CFDictionaryGetValue(vals, kSecOIDX509V1SerialNumber), kSecPropertyKeyValue));
     
-    return boost::shared_ptr<X509CertificateMac>(new X509CertificateMac(host, cert_ref, issuerX500Principal, subjectX500Principal, version, validityNotBefore, validityNotAfter, serialNumber));
+    return boost::shared_ptr<X509CertificateMac>(new X509CertificateMac(host, cert_ref, boost::shared_ptr<SecKeyRef>(new SecKeyRef(privateKey), std::ptr_fun(X509CertificateMacReleaseCFTypeRef)), issuerX500Principal, subjectX500Principal, version, validityNotBefore, validityNotAfter, serialNumber));
 }
 
 
@@ -143,6 +132,12 @@ FB::FBDateString X509CertificateMac::get_notAfter()
 FB::FBDateString X509CertificateMac::get_notBefore()
 {
     return m_validityNotBefore;
+}
+
+FB::JSAPIPtr X509CertificateMac::get_privateKey()
+{
+    // TODO fill in parameters
+    return boost::shared_ptr<Key>(new KeyImpl(m_host, "private", false, Algorithm(m_host, "Boe", FB::VariantMap()), FB::VariantList(), m_privateKey_ref));
 }
 
 

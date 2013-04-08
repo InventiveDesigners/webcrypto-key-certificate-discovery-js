@@ -21,17 +21,23 @@
 
 void X509CertificateSelectorWorkerFunc(X509CertificateSelector * selector)
 {
-    CFArrayRef   certs_ref     = NULL;
+    CFArrayRef   identities_ref     = NULL;
     const void *keys[] =   { kSecClass, kSecReturnRef, kSecMatchLimit };
-    const void *values[] = { kSecClassCertificate, kCFBooleanTrue, kSecMatchLimitAll };
+    const void *values[] = { kSecClassIdentity, kCFBooleanTrue, kSecMatchLimitAll }; // TODO we should list all certificates, but I can't find how to go back from a certificate to a private key
     CFDictionaryRef dict = CFDictionaryCreate(NULL, keys, values, sizeof(keys) / sizeof(*keys), NULL, NULL);
-    OSStatus status = SecItemCopyMatching(dict, (CFTypeRef*) &certs_ref);
+    OSStatus status = SecItemCopyMatching(dict, (CFTypeRef*) &identities_ref);
     
     if (status == noErr)
     {
         FB::VariantList result;
-        for (CFIndex i = 0; i < CFArrayGetCount(certs_ref); ++i) {
-            SecCertificateRef cert_ref = (SecCertificateRef)CFArrayGetValueAtIndex(certs_ref, i);
+        for (CFIndex i = 0; i < CFArrayGetCount(identities_ref); ++i) {
+            SecIdentityRef identity_ref = (SecIdentityRef)CFArrayGetValueAtIndex(identities_ref, i);
+            
+            SecCertificateRef cert_ref;
+            SecIdentityCopyCertificate(identity_ref, &cert_ref);
+            
+            SecKeyRef privateKeyRef;
+            SecIdentityCopyPrivateKey(identity_ref, &privateKeyRef);
             
             CSSM_CERT_TYPE certType = NULL;
             SecCertificateGetType(cert_ref, &certType);
@@ -41,7 +47,7 @@ void X509CertificateSelectorWorkerFunc(X509CertificateSelector * selector)
                 continue;
             }
                         
-            result.push_back(make_variant(X509CertificateMac::createX509CertificateMac(selector->m_host, cert_ref)));
+            result.push_back(make_variant(X509CertificateMac::createX509CertificateMac(selector->m_host, cert_ref, privateKeyRef)));
         }
         
         selector->set_result(result);

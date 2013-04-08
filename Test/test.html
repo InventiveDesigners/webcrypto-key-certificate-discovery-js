@@ -2,8 +2,19 @@
 <head>
 <title>test page for Web Crypto</title>
 </head>
+	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
     <script type="text/javascript">
+    	function str2abv(str) {
+			var buf = new ArrayBuffer(str.length); 
+			var bufView = new Uint8Array(buf);
+			for (var i=0, strLen=str.length; i<strLen; i++) {
+				bufView[i] = str.charCodeAt(i);
+			}
+			return bufView;
+		}
+		
         function plugin0()
         {
             return document.getElementById('plugin0');
@@ -21,10 +32,20 @@
                 
         function listCertificates()
         {
-            var certificateSelector = plugin().createX509CertificateSelector({});
+            var certificateSelector = plugin().createX509CertificateSelector({ publicKeyAlgorithm : {name: 'RSASSA-PKCS1-v1_5', params: {}}, privateKeyValid: true});
             
             certificateSelector.oncomplete = function() {
             	console.log("Certificates :" + certificateSelector.result);
+            	
+            	var certificates = certificateSelector.result;
+            	$('#certificates').empty();
+            	for (var i in certificates)
+            	{ 
+            		$('#certificates').append('<li class="ui-widget-content">' + certificates[i] + '</li>');
+            		$('#certificates li:nth-child(' + (i*1 + 1) + ')')[0].certificate = certificates[i];
+            	}
+            	
+            	$('#certificates li:first').addClass('ui-selected');
             };
             
             certificateSelector.onerror = function() {
@@ -34,9 +55,47 @@
             certificateSelector.execute();
         }
         
-        
-        function load()
+        function toHex(value) 
         {
+        	var result = '';
+        	for(var i = 0; i < value.length; ++i)
+        	{
+        		var hex = value[i];
+        		if (hex < 16)
+        		{
+        			result = result + '0' + value[i].toString(16);
+        		}
+        		else
+        		{
+        			result = result + value[i].toString(16);
+        		}
+        	}
+        	return result.toUpperCase();
+        }
+        
+        function sign()
+        {
+        	var key = $('#certificates .ui-selected')[0].certificate.privateKey;
+        	var cryptoOperation = plugin().encrypt(key.algorithm, key);
+        	cryptoOperation.oncomplete = function() {
+            	console.log("Signature :" + toHex(cryptoOperation.result));
+            }
+            
+            cryptoOperation.onerror = function() {
+            	console.log("Error signing data");
+            };
+            
+            cryptoOperation.onabort = function() {
+            	console.log("Aborted encrypt operation");
+            };
+            
+            cryptoOperation.process(Base64.encode(str2abv('8c7b19241e3873b5878ab762aa9c59117d1d150b')));
+            cryptoOperation.finish();
+        }
+        
+        
+        $(function() {
+        
         	if (typeof console  != "undefined") {
     			if (typeof console.log != 'undefined') {
         			console.olog = console.log;
@@ -50,7 +109,81 @@
     			console.olog(message);
     			$('#debugDiv').append('<div class="message">' + message + '</div>');
 			};
-        }
+			
+			$( "#certificates" ).selectable();
+	    });
+	    
+	    var Base64 = {
+
+			_keyStr : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
+
+			// public method for encoding
+			encode : function (input) {
+				var output = "";
+				var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+				var i = 0;
+
+				while (i < input.length) {
+
+					chr1 = input[i++];
+					chr2 = input[i++];
+					chr3 = input[i++];
+
+					enc1 = chr1 >> 2;
+					enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+					enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+					enc4 = chr3 & 63;
+
+					if (isNaN(chr2)) {
+						enc3 = enc4 = 64;
+					} else if (isNaN(chr3)) {
+						enc4 = 64;
+					}
+
+					output = output +
+					this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) +
+					this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
+
+				}
+
+				return output;
+			},
+
+			// public method for decoding
+			decode : function (input) {
+				var output = "";
+				var chr1, chr2, chr3;
+				var enc1, enc2, enc3, enc4;
+				var i = 0;
+
+				input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+
+				while (i < input.length) {
+
+					enc1 = this._keyStr.indexOf(input[i++]);
+					enc2 = this._keyStr.indexOf(input[i++]);
+					enc3 = this._keyStr.indexOf(input[i++]);
+					enc4 = this._keyStr.indexOf(input[i++]);
+
+					chr1 = (enc1 << 2) | (enc2 >> 4);
+					chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+					chr3 = ((enc3 & 3) << 6) | enc4;
+
+					output = output + String.fromCharCode(chr1);
+
+					if (enc3 != 64) {
+						output = output + String.fromCharCode(chr2);
+					}
+					if (enc4 != 64) {
+						output = output + String.fromCharCode(chr3);
+					}
+
+				}
+
+				return output;
+
+			}
+		}
     </script>
     
     <style type="text/css">
@@ -65,14 +198,22 @@
     		padding-bottom: 0px;
     		margin-bottom: 0px;
     	}
+    	
+    	#certificates .ui-selecting { background: #FECA40; }
+		#certificates .ui-selected { background: #F39814; color: white; }
+		#certificates { list-style-type: none; margin: 0; padding: 0; width: 60%; }
+		#certificates li { margin: 3px; padding: 0.4em; font-size: 1.4em; height: 18px; }
     </style>
-<body onload="load()">
+<body>
 <object id="plugin0" type="application/x-webcryptokeyandcertificatediscovery" width="0" height="0">
     <param name="onload" value="pluginLoaded" />
 </object><br />
     
-<a href="#" onclick="javascript:listCertificates()">List Certificates</a>
+<a href="#" onclick="javascript:listCertificates()">Load Certificates</a>
+<a href="#" onclick="javascript:sign()">Sign</a>
 
+<ol id="certificates">
+</ol>
 <div id="debugDiv" style="margin-top: 30px; border: 1px solid gray; padding: 10px;"></div>
 </body>
 </html>

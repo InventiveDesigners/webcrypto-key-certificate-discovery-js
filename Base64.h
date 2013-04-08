@@ -12,23 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/**********************************************************\
+//
+//  Base64.h
+//  FireBreath
+//
+//  Created by Nick Van den Bleeken on 05/04/13.
+//
 
-  Auto-generated WebCryptoKeyandCertificateDiscoveryAPI.cpp
+#ifndef __FireBreath__Base64__
+#define __FireBreath__Base64__
 
-\**********************************************************/
+#include <string>
 
-#include "JSObject.h"
-#include "variant_list.h"
-#include "DOM/Document.h"
-#include "global/config.h"
+class Base64 {
+public:
+    static char *decode(std::string base64, int *resultLength);
+    static std::string encode(unsigned char *buffer, int length);
+    
+private:
+    static char m_encodingTable[];
+    static char *m_decodingTable;
+    static int m_modTable[];
+    
+    static void build_decoding_table();
+    
 
-#include "WebCryptoKeyandCertificateDiscoveryAPI.h"
+};
 
-#include "X509CertificateSelector.h"
-
-FB::JSAPIPtr WebCryptoKeyandCertificateDiscoveryAPI::createX509CertificateSelector(FB::VariantMap selectorParams)
-{
-    return boost::shared_ptr<X509CertificateSelector>(new X509CertificateSelector(m_host));
-}
-
+#endif /* defined(__FireBreath__Base64__) */

@@ -24,6 +24,9 @@
 #include "JSAPIAuto.h"
 #include "BrowserHost.h"
 #include "WebCryptoKeyandCertificateDiscovery.h"
+#include "Algorithm.h"
+#include "Key.h"
+#include "CryptoOperation.h"
 
 #ifndef H_WebCryptoKeyandCertificateDiscoveryAPI
 #define H_WebCryptoKeyandCertificateDiscoveryAPI
@@ -46,6 +49,7 @@ public:
         m_plugin(plugin), m_host(host)
     {
         registerMethod("createX509CertificateSelector",      make_method(this, &WebCryptoKeyandCertificateDiscoveryAPI::createX509CertificateSelector));
+        registerMethod("encrypt",      make_method(this, &WebCryptoKeyandCertificateDiscoveryAPI::encrypt));
        
     }
 
@@ -61,6 +65,7 @@ public:
     WebCryptoKeyandCertificateDiscoveryPtr getPlugin();
 
     FB::JSAPIPtr createX509CertificateSelector(FB::VariantMap selectorParams);
+    boost::shared_ptr<CryptoOperation> encrypt(boost::shared_ptr<Algorithm> algorithm, boost::shared_ptr<Key> key, boost::optional<std::string> base64Buffer);
 
 private:
     WebCryptoKeyandCertificateDiscoveryWeakPtr m_plugin;

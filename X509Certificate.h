@@ -35,15 +35,12 @@ class X509Certificate : public FB::JSAPIAuto
 public:
     X509Certificate(const FB::BrowserHostPtr& host, std::string name);
     virtual ~X509Certificate() {};
-    
-    X509Certificate(const X509Certificate& other);
-    X509Certificate& operator=(const X509Certificate& other);
-    
+        
     virtual FB::JSAPIPtr get_issuerX500Principal() = 0;
     virtual FB::FBDateString get_notAfter() = 0;
     virtual FB::FBDateString get_notBefore() = 0;
     //get_publicKey
-    //get_privateKey
+    virtual FB::JSAPIPtr get_privateKey() = 0;
     virtual std::string get_serialNumber() = 0;
     virtual FB::JSAPIPtr get_subjectX500Principal() = 0;
     virtual long get_version() = 0;

@@ -27,20 +27,6 @@ X509Certificate::X509Certificate(const FB::BrowserHostPtr& host, std::string nam
     initializeProperties();
 }
 
-X509Certificate::X509Certificate(const X509Certificate&other) : JSAPIAuto(other.m_description), m_host(other.m_host)
-{
-    initializeProperties();
-}
-
-X509Certificate& X509Certificate::operator=(const X509Certificate& other)
-{
-    m_host = other.m_host;
-    
-    initializeProperties();
-    
-    return *this;
-}
-
 void X509Certificate::initializeProperties()
 {
     registerProperty("issuerX500Principal",  make_property(this, &X509Certificate::get_issuerX500Principal));
@@ -49,7 +35,7 @@ void X509Certificate::initializeProperties()
     //registerProperty("notAfter",  make_property(this, &X509Certificate::get_notAfter));
     //registerProperty("notBefore",  make_property(this, &X509Certificate::get_notBefore));
     // registerProperty("publicKey",  make_property(this, &X509Certificate::get_publicKey));
-    // registerProperty("privateKey",  make_property(this, &X509Certificate::get_privateKey));
+    registerProperty("privateKey",  make_property(this, &X509Certificate::get_privateKey));
     registerProperty("serialNumber",  make_property(this, &X509Certificate::get_serialNumber));
     registerProperty("subjectX500Principal",  make_property(this, &X509Certificate::get_subjectX500Principal));
     registerProperty("version",  make_property(this, &X509Certificate::get_version));

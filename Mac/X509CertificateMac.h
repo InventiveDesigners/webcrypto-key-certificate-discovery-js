@@ -36,17 +36,15 @@
 class X509CertificateMac: public X509Certificate
 {
 public:
-    X509CertificateMac(const FB::BrowserHostPtr& host, SecCertificateRef cert_ref,X500Principal issuerX500Principal, X500Principal subjectX500Principal, int version, std::string validityNotBefore, std::string validityNotAfter, std::string serialNumber);
-    virtual ~X509CertificateMac() {};
-    
-    X509CertificateMac(const X509CertificateMac& other);
-    X509CertificateMac& operator=(const X509CertificateMac& other);
-    
-    static boost::shared_ptr<X509Certificate> createX509CertificateMac(const FB::BrowserHostPtr& host, SecCertificateRef cert_ref);
+    X509CertificateMac(const FB::BrowserHostPtr& host, SecCertificateRef cert_ref, boost::shared_ptr<SecKeyRef> privateKey_ref,X500Principal issuerX500Principal, X500Principal subjectX500Principal, int version, std::string validityNotBefore, std::string validityNotAfter, std::string serialNumber);
+    virtual ~X509CertificateMac() { CFRelease(m_cert_ref); };
+        
+    static boost::shared_ptr<X509Certificate> createX509CertificateMac(const FB::BrowserHostPtr& host, SecCertificateRef cert_ref, SecKeyRef privateKeyRef);
     
     virtual FB::JSAPIPtr get_issuerX500Principal();
     virtual FB::FBDateString get_notAfter();
     virtual FB::FBDateString get_notBefore();
+    virtual FB::JSAPIPtr get_privateKey();
     virtual std::string get_serialNumber();
     virtual FB::JSAPIPtr get_subjectX500Principal();
     virtual long get_version();
@@ -54,6 +52,7 @@ public:
     
 private:
     SecCertificateRef m_cert_ref;
+    boost::shared_ptr<SecKeyRef> m_privateKey_ref;
     
     long m_version;
     std::string m_validityNotBefore;
@@ -70,6 +69,8 @@ private:
     static X500Principal convertToX500Principal(const FB::BrowserHostPtr& host, CFArrayRef x500PrincipalRef);
     
     static std::map< std::wstring, std::wstring > createOIDtoStringMapping();
+    
+    static void releaseCFTypeRef(CFTypeRef* cf);
 };
 
 #endif /* defined(__FireBreath__X509CertificateMac__) */
