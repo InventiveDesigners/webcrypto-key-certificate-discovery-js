@@ -74,24 +74,6 @@ static CFStringRef SecCopyHexStringFromData(CFDataRef data)
     return string;
 }
 
-std::string stringUTF8String(CFStringRef aString) {
-    if (aString == NULL) {
-        return "";
-    }
-    
-    CFIndex length = CFStringGetLength(aString);
-    CFIndex maxSize =
-    CFStringGetMaximumSizeForEncoding(length,
-                                      kCFStringEncodingUTF8);
-    char *buffer = (char *)malloc(maxSize);
-    if (CFStringGetCString(aString, buffer, maxSize,
-                           kCFStringEncodingUTF8)) {
-        std::string result = buffer;
-        free(buffer);
-        return result;
-    }
-    return "";
-}
 
 void CryptoOperationImpl::finishImpl()
 {
@@ -103,8 +85,6 @@ void CryptoOperationImpl::finishImpl()
         callOnAbort();
         return;
     }
-    
-    std::string signatureStr = stringUTF8String(SecCopyHexStringFromData(signature));
     
     CFIndex length = CFDataGetLength(signature);
     const UInt8 *signatureBytes = CFDataGetBytePtr(signature);
