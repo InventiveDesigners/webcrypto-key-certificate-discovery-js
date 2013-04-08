@@ -53,28 +53,6 @@ void CryptoOperationImpl::processImpl(const char *buffer, unsigned long size)
     }
 }
 
-// DEBUG
-static CFStringRef SecCopyHexStringFromData(CFDataRef data)
-{
-    CFIndex ix, length;
-	const UInt8 *bytes;
-    CFMutableStringRef string;
-    
-	if (data) {
-		length = CFDataGetLength(data);
-		bytes = CFDataGetBytePtr(data);
-	} else {
-		length = 0;
-		bytes = NULL;
-	}
-	string = CFStringCreateMutable(kCFAllocatorDefault, length * 2);
-    for (ix = 0; ix < length; ++ix)
-		CFStringAppendFormat(string, NULL, CFSTR("%02X"), bytes[ix]);
-    
-    return string;
-}
-
-
 void CryptoOperationImpl::finishImpl()
 {
     CFErrorRef error = NULL;
