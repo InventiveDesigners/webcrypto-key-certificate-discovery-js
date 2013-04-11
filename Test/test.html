@@ -40,8 +40,10 @@
             	var certificates = evt.target.result;
             	$('#certificates').empty();
             	for (var i in certificates)
-            	{ 
-            		$('#certificates').append('<li class="ui-widget-content">' + certificates[i] + '</li>');
+            	{
+            		/, ?CN=([^,]*)/.exec("," + certificates[i].subjectX500Principal.name + ",");
+            		var cn = RegExp.$1;
+            		$('#certificates').append('<li class="ui-widget-content">' + cn + '</li>');
             		$('#certificates li:nth-child(' + (i*1 + 1) + ')')[0].certificate = certificates[i];
             	}
             	
