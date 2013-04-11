@@ -34,11 +34,7 @@ public:
     X509CertificateSelector(const FB::BrowserHostPtr& host);
     virtual ~X509CertificateSelector() {};
     
-    void execute();
-
-private:
-    X509CertificateSelector(const X509CertificateSelector& other) : KeyOperation(other) { initializeMethods(); };
-    
+    void execute();    
     
 private:
     void initializeMethods();

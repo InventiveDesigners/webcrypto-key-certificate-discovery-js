@@ -49,7 +49,7 @@ void CryptoOperationImpl::processImpl(const char *buffer, unsigned long size)
     {
         CFRelease(m_signingTransform);
         m_signingTransform = NULL;
-        callOnAbort();
+        FireJSEvent("onabort", FB::VariantMap(), FB::variant_list_of());
     }
 }
 
@@ -60,7 +60,7 @@ void CryptoOperationImpl::finishImpl()
     
     if (NULL != error)
     {
-        callOnAbort();
+        FireJSEvent("onabort", FB::VariantMap(), FB::variant_list_of());
         return;
     }
     
@@ -77,11 +77,11 @@ void CryptoOperationImpl::finishImpl()
     
     if (NULL != error)
     {
-        callOnAbort();
+        FireJSEvent("onabort", FB::VariantMap(), FB::variant_list_of());
         return;
     }
     
-    callOnComplete();
+    FireJSEvent("oncomplete", FB::VariantMap(), FB::variant_list_of());
 }
 
 

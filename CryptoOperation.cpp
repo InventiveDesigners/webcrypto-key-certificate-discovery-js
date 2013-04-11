@@ -21,6 +21,7 @@
 //
 
 #include "CryptoOperation.h"
+#include "JSEvent.h"
 
 #include "Base64.h"
 
@@ -32,10 +33,11 @@ CryptoOperation::CryptoOperation(const FB::BrowserHostPtr& host, const boost::sh
 
 void CryptoOperation::initializePropertiesAndMethods()
 {
-    registerProperty("onabort",  make_property(this, &CryptoOperation::get_onabort, &CryptoOperation::set_onabort));
-    registerProperty("onerror",  make_property(this, &CryptoOperation::get_onerror, &CryptoOperation::set_onerror));
-    registerProperty("onprogress",  make_property(this, &CryptoOperation::get_onprogress, &CryptoOperation::set_onprogress));
-    registerProperty("oncomplete",  make_property(this, &CryptoOperation::get_oncomplete, &CryptoOperation::set_oncomplete));
+    registerEvent("oncomplete");
+    registerEvent("onerror");
+    registerEvent("onprogress");
+    registerEvent("onabort");
+
     registerProperty("result",  make_property(this, &CryptoOperation::get_result));
     registerProperty("key",  make_property(this, &CryptoOperation::get_key));
     registerProperty("algorithm",  make_property(this, &CryptoOperation::get_algorithm));
@@ -46,45 +48,6 @@ void CryptoOperation::initializePropertiesAndMethods()
 
 }
 
-void CryptoOperation::set_onerror(const FB::JSObjectPtr& onerror)
-{
-    m_onerror = onerror;
-}
-
-FB::JSObjectPtr CryptoOperation::get_onerror()
-{
-    return m_onerror;
-}
-
-void CryptoOperation::set_onabort(const FB::JSObjectPtr& onabort)
-{
-    m_onabort = onabort;
-}
-
-FB::JSObjectPtr CryptoOperation::get_onabort()
-{
-    return m_onabort;
-}
-
-void CryptoOperation::set_onprogress(const FB::JSObjectPtr& onprogress)
-{
-    m_onprogress = onprogress;
-}
-
-FB::JSObjectPtr CryptoOperation::get_onprogress()
-{
-    return m_onprogress;
-}
-
-void CryptoOperation::set_oncomplete(const FB::JSObjectPtr& oncomplete)
-{
-    m_oncomplete = oncomplete;
-}
-
-FB::JSObjectPtr CryptoOperation::get_oncomplete()
-{
-    return m_oncomplete;
-}
 
 boost::shared_ptr<Key> CryptoOperation::get_key()
 {
@@ -105,31 +68,6 @@ void CryptoOperation::set_result(FB::variant result)
 {
     m_result = result;
 }
-
-void CryptoOperation::callOnComplete() const
-{
-    if (m_oncomplete)
-        m_oncomplete->InvokeAsync("", FB::variant_list_of());
-}
-
-void CryptoOperation::callOnAbort() const
-{
-    if (m_onabort)
-        m_onabort->InvokeAsync("", FB::variant_list_of());
-}
-
-void CryptoOperation::callOnProgress() const
-{
-    if (m_onprogress)
-        m_onprogress->InvokeAsync("", FB::variant_list_of());
-}
-
-void CryptoOperation::callOnError() const
-{
-    if (m_onerror)
-        m_onerror->InvokeAsync("", FB::variant_list_of());
-}
-
 
 void CryptoOperation::process(const std::string& bufferBase64)
 {
@@ -195,7 +133,7 @@ void CryptoOperation::processQueue()
     
     if (m_abort)
     {
-        callOnAbort();
+        FireJSEvent("onabort", FB::VariantMap(), FB::variant_list_of());
         return;
     }
     

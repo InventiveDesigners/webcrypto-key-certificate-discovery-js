@@ -34,10 +34,10 @@
         {
             var certificateSelector = plugin().createX509CertificateSelector({ publicKeyAlgorithm : {name: 'RSASSA-PKCS1-v1_5', params: {}}, privateKeyValid: true});
             
-            certificateSelector.oncomplete = function() {
-            	console.log("Certificates :" + certificateSelector.result);
+            certificateSelector.oncomplete = function(evt) {
+            	console.log("Certificates :" + evt.target.result);
             	
-            	var certificates = certificateSelector.result;
+            	var certificates = evt.target.result;
             	$('#certificates').empty();
             	for (var i in certificates)
             	{ 
@@ -48,7 +48,7 @@
             	$('#certificates li:first').addClass('ui-selected');
             };
             
-            certificateSelector.onerror = function() {
+            certificateSelector.onerror = function(evt) {
             	console.log("Error retrieving certificates");
             };
             
@@ -77,15 +77,15 @@
         {
         	var key = $('#certificates .ui-selected')[0].certificate.privateKey;
         	var cryptoOperation = plugin().encrypt(key.algorithm, key);
-        	cryptoOperation.oncomplete = function() {
-            	console.log("Signature :" + toHex(cryptoOperation.result));
+        	cryptoOperation.oncomplete = function(evt) {
+            	console.log("Signature :" + toHex(evt.target.result));
             }
             
-            cryptoOperation.onerror = function() {
+            cryptoOperation.onerror = function(evt) {
             	console.log("Error signing data");
             };
             
-            cryptoOperation.onabort = function() {
+            cryptoOperation.onabort = function(evt) {
             	console.log("Aborted encrypt operation");
             };
             

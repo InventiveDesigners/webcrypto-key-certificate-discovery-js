@@ -45,19 +45,6 @@ public:
     
     void abort();
     
-    
-    void set_onabort(const FB::JSObjectPtr& onabort);
-    FB::JSObjectPtr get_onabort();
-    
-    void set_onerror(const FB::JSObjectPtr& onerror);
-    FB::JSObjectPtr get_onerror();
-    
-    void set_onprogress(const FB::JSObjectPtr& onprogress);
-    FB::JSObjectPtr get_onprogress();
-    
-    void set_oncomplete(const FB::JSObjectPtr& oncomplete);
-    FB::JSObjectPtr get_oncomplete();
-    
     boost::shared_ptr<Key> get_key();
     boost::shared_ptr<Algorithm> get_algorithm();
     
@@ -68,12 +55,7 @@ public:
 protected:
     virtual void processImpl(const char *buffer, unsigned long size) = 0;
     virtual void finishImpl() = 0;
-    
-    void callOnAbort() const;
-    void callOnProgress() const;
-    void callOnComplete() const;
-    void callOnError() const;
-    
+        
 protected:
     FB::BrowserHostPtr m_host;
     
@@ -81,10 +63,6 @@ private:
     boost::shared_ptr<Key> m_key;
     boost::shared_ptr<Algorithm> m_algorithm;
     FB::variant m_result;
-    FB::JSObjectPtr m_onabort;
-    FB::JSObjectPtr m_onerror;
-    FB::JSObjectPtr m_onprogress;
-    FB::JSObjectPtr m_oncomplete;
     
     std::queue<std::string> m_processQueue;
     bool m_finish, m_abort;
