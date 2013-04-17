@@ -21,22 +21,11 @@
 //
 
 #include "X509CertificateImpl.h"
+#include "../Key.h"
 
 X509CertificateImpl::X509CertificateImpl(const FB::BrowserHostPtr& host, std::string name) : X509Certificate(host, name)
 {
 }
-
-X509CertificateImpl::X509CertificateImpl(const X509CertificateImpl& other) : X509Certificate(other)
-{
-}
-
-X509CertificateImpl& X509CertificateImpl::operator=(const X509CertificateImpl& other)
-{
-    X509Certificate::operator=(other);
-    
-    return *this;
-}
-
 
 FB::JSAPIPtr X509CertificateImpl::get_issuerX500Principal()
 {
@@ -56,6 +45,11 @@ FB::FBDateString X509CertificateImpl::get_notBefore()
     return FB::FBDateString();
 }
 
+FB::JSAPIPtr X509CertificateImpl::get_privateKey()
+{
+    // TODO fill in parameters
+    return boost::shared_ptr<Key>(new Key(m_host, "private", false, Algorithm(m_host, "Boe", FB::VariantMap()), FB::VariantList()));
+}
 
 std::string X509CertificateImpl::get_serialNumber()
 {

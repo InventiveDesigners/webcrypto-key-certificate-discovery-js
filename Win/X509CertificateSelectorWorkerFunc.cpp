@@ -28,7 +28,7 @@ void X509CertificateSelectorWorkerFunc(X509CertificateSelector * selector)
 
 	if(!hCertStore)
 	{
-		selector->callOnError();
+		selector->FireJSEvent("onerror", FB::VariantMap(), FB::variant_list_of());
 	}
 
 	PCCERT_CONTEXT   pCertContext=NULL;
@@ -42,5 +42,5 @@ void X509CertificateSelectorWorkerFunc(X509CertificateSelector * selector)
 	}
 
     selector->set_result(result);
-    selector->callOnComplete();
+    selector->FireJSEvent("oncomplete", FB::VariantMap(), FB::variant_list_of());
 }

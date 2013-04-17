@@ -37,7 +37,7 @@ public:
     virtual FB::JSAPIPtr get_issuerX500Principal();
     virtual FB::FBDateString get_notAfter();
     virtual FB::FBDateString get_notBefore();
-    virtual FB::JSAPIPtr get_privateKey(void);
+	virtual FB::JSAPIPtr get_privateKey();
     virtual std::string get_serialNumber();
     virtual FB::JSAPIPtr get_subjectX500Principal();
     virtual long get_version();

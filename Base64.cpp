@@ -19,8 +19,9 @@
 //  Created by Nick Van den Bleeken on 05/04/13.
 //
 
-#include "Base64.h"
+#include <boost/cstdint.hpp>
 
+#include "Base64.h"
 
 char Base64::m_encodingTable[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
     'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
